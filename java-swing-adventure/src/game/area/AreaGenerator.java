@@ -42,33 +42,9 @@ public class AreaGenerator {
     };
     
     /**
-     * Generiert ein vollständiges Areal-Netzwerk für eine Dimension
-     */
-    public static AreaGraph generateAreaGraph(Random rng, Dimension dimension) {
-        int areaCount = 3 + rng.nextInt(10); // 3-12 Areale
-        List<Area> areas = new ArrayList<>();
-        
-        // 1. Alle Areale generieren
-        Area startArea = generateArea(rng, dimension, dimension.getDangerLevel()); // Start = Hub
-        areas.add(startArea);
-        
-        for (int i = 1; i < areaCount; i++) {
-            int danger = calculateDanger(i, areaCount, dimension);
-            Area area = generateArea(rng, dimension, danger);
-            areas.add(area);
-        }
-        
-        // 2. Areale verbinden (Graph-Struktur)
-        AreaGraph graph = new AreaGraph(rng, areas);
-        connectAreas(rng, graph);
-        
-        return graph;
-    }
-    
-    /**
      * Generiert ein einzelnes Areal
      */
-    private static Area generateArea(Random rng, Dimension dimension, int dangerLevel) {
+    public static Area generateArea(Random rng, Dimension dimension, int dangerLevel) {
 
         Atmosphere primary = dimension.getPrimaryAtmosphere().getBlueprint();
         AreaType type = AreaType.getRandomForAtmosphere(rng, primary);
@@ -145,6 +121,13 @@ public class AreaGenerator {
         return verb + article + adjective + " " + type.getDisplayName() + ".";
     }
     
+    private static float calculateHostility(Random rng, Dimension dimension, AreaType type, int danger) {        
+        float base = (dimension.getHostility() + type.getBaseHostility()) / 2f;
+        base += (danger - 1) * 0.1f; // Höherer Danger = mehr Hostility
+        
+        return Math.max(0f, Math.min(1f, base + (rng.nextFloat() - 0.5f) * 0.15f));
+    }
+
     @SuppressWarnings("unused")
     private static String getDimensionalDetail(Random rng, Dimension dimension) {
         String[] templates = {
@@ -181,59 +164,5 @@ public class AreaGenerator {
         };
         
         return hints[rng.nextInt(hints.length)];
-    }
-    
-    /**
-     * Verbindet Areale zu einem Graph
-     */
-    private static void connectAreas(Random rng, AreaGraph graph) {
-        // Start-Areal mit 2-3 Arealen verbinden
-        Area start = graph.getCurrentArea();
-        int startConnections = 2 + rng.nextInt(3); // 2-4
-        
-        List<Area> allAreas = graph.getAllAreas();
-
-        for (int i = 1; i <= Math.min(startConnections, allAreas.size() - 1); i++) {
-            graph.connectBidirectional(start, allAreas.get(i));
-        }
-        
-        // Restliche Areale verbinden
-        for (int i = 1; i < allAreas.size(); i++) {
-            Area current = allAreas.get(i);
-            int connections = graph.getNeighbors(current).size();
-            
-            // Jedes Areal sollte 1-4 Verbindungen haben
-            int targetConnections = 1 + rng.nextInt(4);
-            
-            while (connections < targetConnections && connections < allAreas.size() - 1) {
-                // Zufälliges anderes Areal wählen
-                Area other = allAreas.get(rng.nextInt(allAreas.size()));
-                
-                if (other != current && !graph.getNeighbors(current).contains(other)) {
-                    graph.connectBidirectional(current, other);
-                    connections++;
-                }
-            }
-        }
-    }
-    
-    /**
-     * Berechnet Gefahrenlevel basierend auf Position im Graph
-     */
-    private static int calculateDanger(int index, int total, Dimension dimension) {
-        float progress = (float) index / total;
-        int baseDanger = dimension.getDangerLevel();
-        
-        // Danger steigt mit Fortschritt
-        int areaDanger = baseDanger + (int) (progress * 2);
-        
-        return Math.max(1, Math.min(5, areaDanger));
-    }
-    
-    private static float calculateHostility(Random rng, Dimension dimension, AreaType type, int danger) {        
-        float base = (dimension.getHostility() + type.getBaseHostility()) / 2f;
-        base += (danger - 1) * 0.1f; // Höherer Danger = mehr Hostility
-        
-        return Math.max(0f, Math.min(1f, base + (rng.nextFloat() - 0.5f) * 0.15f));
     }
 }

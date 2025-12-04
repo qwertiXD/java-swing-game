@@ -4,6 +4,7 @@ import java.util.Random;
 
 import game.area.AreaGenerator;
 import game.area.AreaGraph;
+import game.area.AreaGraphGenerator;
 import game.dimension.Atmosphere.*;
 
 public class DimensionGenerator {
@@ -99,7 +100,7 @@ public class DimensionGenerator {
                            ambientEnergy, hostility, dangerLevel);
         
         // Area-Graph generieren
-        AreaGraph areaGraph = AreaGenerator.generateAreaGraph(rng, dimension);
+        AreaGraph areaGraph = AreaGraphGenerator.generateAreaGraph(rng, dimension);
         dimension.setAreaGraph(areaGraph);
         
         printDimensionStats(dimension);
