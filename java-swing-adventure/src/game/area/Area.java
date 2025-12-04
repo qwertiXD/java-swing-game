@@ -9,9 +9,10 @@ public class Area {
     private final String name;
     private final String description;
     private final AreaType type;
-    private boolean isExplored;
+    private boolean isExplored;  // Besser vielleicht: Wert von 0-100 um die Exploration zu tracken, Dazu brauche ich erst aber encounter
     private final float hostility;
     @SuppressWarnings("unused")
+
     private Set<Encounter> encounters;
 
     private final Dimension parentDimension;

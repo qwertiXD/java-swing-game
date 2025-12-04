@@ -22,6 +22,13 @@ public class AreaGraph {
     public void addArea(Area area) {
         edges.putIfAbsent(area, new ArrayList<>());
     }
+    
+    public void connectOnedirectional(Area a, Area b) {
+        addArea(a);
+        addArea(b);
+        
+        edges.get(a).add(b);
+    }
 
     public void connectBidirectional(Area a, Area b) {
         addArea(a);
@@ -31,14 +38,10 @@ public class AreaGraph {
         edges.get(b).add(a);
     }
 
-    public void connectOnedirectional(Area a, Area b) {
-        addArea(a);
-        addArea(b);
 
-        edges.get(a).add(b);
-    }
-
-
+    // =====================================
+    // Ab hier Interaktion mit dem Ara-Graph
+    // =====================================
 
     /**
      * Bewegt den Spieler zu einem neuen Areal
@@ -76,23 +79,14 @@ public class AreaGraph {
         return explored;
     }
     
-    /**
-     * Gibt die Anzahl der erkundeten Areale zurück
-     */
     public int getExploredCount() {
         return getExploredAreas().size();
     }
     
-    /**
-     * Gibt die Gesamtanzahl der Areale zurück
-     */
     public int getTotalAreaCount() {
         return getAllAreas().size();
     }
     
-    /**
-     * Prüft ob alle Areale erkundet wurden
-     */
     public boolean isFullyExplored() {
         return getExploredCount() == getTotalAreaCount();
     }

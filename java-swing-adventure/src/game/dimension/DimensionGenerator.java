@@ -146,7 +146,7 @@ public class DimensionGenerator {
         desc.append(groundDesc).append(" ").append(weathDesc).append("\n");
         desc.append(tempDesc).append("\n");
         if (smell != Smell.VAKUUM) desc.append(smellDesc);
-        if (sound != Sound.NULL) desc.append(" ").append(soundDesc);
+        if (sound != Sound.NULL) desc.append("\n").append(soundDesc);
         
         // Danger Warning
         if(dangerLevel >= 4) {
