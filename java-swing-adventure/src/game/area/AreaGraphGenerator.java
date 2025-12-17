@@ -1,10 +1,7 @@
 package game.area;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import game.dimension.Dimension;
+import java.util.*;
 
 public class AreaGraphGenerator {
 
@@ -12,16 +9,16 @@ public class AreaGraphGenerator {
      * Generiert ein vollständiges Areal-Netzwerk für eine Dimension
      */
     public static AreaGraph generateAreaGraph(Random rng, Dimension dimension) {
-        int areaCount = 3 + rng.nextInt(10); // 3-12 Areale
+        int areaCount = 3 + rng.nextInt(3); // 3-5 Areale
         List<Area> areas = new ArrayList<>();
         
-        // 1. Alle Areale generieren
-        Area startArea = AreaGenerator.generateArea(rng, dimension, dimension.getDangerLevel()); // Start = Hub
-        areas.add(startArea);
+        // Occurrence-Tracker für limitierte Areale
+        Map<AreaType, Integer> occurrences = new HashMap<>();
         
-        for (int i = 1; i < areaCount; i++) {
+        // 1. Alle Areale generieren
+        for (int i = 0; i < areaCount; i++) {
             int danger = calculateDanger(i, areaCount, dimension);
-            Area area = AreaGenerator.generateArea(rng, dimension, danger);
+            Area area = AreaGenerator.generateArea(rng, dimension, danger, occurrences);
             areas.add(area);
         }
         
@@ -49,9 +46,9 @@ public class AreaGraphGenerator {
      * Verbindet Areale zu einem Graph
      */
     private static void connectAreas(Random rng, AreaGraph graph) {
-        // Start-Areal mit 2-3 Arealen verbinden
+        // Start-Areal mit 2-4 Arealen verbinden
         Area start = graph.getCurrentArea();
-        int startConnections = 2 + rng.nextInt(3); // 2-4
+        int startConnections = 2 + rng.nextInt(3);
         
         List<Area> allAreas = graph.getAllAreas();
 

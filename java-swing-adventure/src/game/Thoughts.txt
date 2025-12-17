@@ -1,0 +1,21 @@
+Wie sieht die Generierung von oben nach unten idealierweise aus?
+
+Das ausgefeilte Textuelle wird erstmal weggelassen und kommt später dazu. Wichtig ist erstmal die mechanische Seite.
+Und bevor unimergenter und schlechter Text generiert wird, lieber erstmal nur die Genre- und/oder Gefühls-Bezeichnung (etc.) drucken
+
+1. Dimension
+    - Hat ein Genre aus Ort (Sci-Fi, Fantasy, Historical, Real, ...) und Gefühl (Horror, Mystery, Romance, Comedy, ...)
+    - Gibt dadurch auch Regeln vor
+    - Definierende Werte wie Gefahrenlevel, Feindseligkeit, ambientEnergy
+2. Areale
+    - gespeichert und verbunden durch den Areal-Graphen
+    - Aus Dimension (Genre, Regeln, Werte) generiert:
+        - Ort-Genre: Verschiedene Typen von Arealen, die in diesem Genre vorhanden sind
+        - Gefühls-Genre: Verschiedene Ambience-Typen, die in diesem Genre vorhanden sind
+        - + feste Areal-Typen, die es überall geben kann
+    - manche Areale haben eine begrenzte Anzahl, wie oft sie in einer Dimension vorkommen dürfen. (zB Rauschschiff-Dimension: nur eine Kantine)
+3. Encounter
+    - großer Stack an Encountern, der immer erweitert wird und im entsprechenden Areal vorkommen kann.
+    - Implementieren Typen wie Quest, Kämpfe, Händler, etc.
+    - Arbeiten mit Triggern und Events. So können Encounter mit der Story wachsen
+    - Abhängig von Dimension und Areal 

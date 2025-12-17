@@ -3,94 +3,45 @@ package game.dimension;
 import java.util.Random;
 
 public enum Atmosphere {
-    PRAEHISTORISCH(
-        new Temperature[]{Temperature.HEISS, Temperature.WARM, Temperature.SCHWUEL},
-        new Smell[]{Smell.ERDIG, Smell.MODRIG, Smell.SCHWEFEL, Smell.VEGETATION},
-        new Sound[]{Sound.TIERISCH, Sound.GROLLEND, Sound.KNACKEN},
-        new Sky[]{Sky.NEBULOES, Sky.ORANGE, Sky.VIOLETT},
-        new Ground[]{Ground.ERDIG, Ground.SUMPFIG, Ground.VULKANISCH},
-        new Lighting[]{Lighting.DAEMMERIG, Lighting.GRELL, Lighting.PULSIEREND},
-        new Weather[]{Weather.SCHWUEL, Weather.GEWITTERIG, Weather.NEBLIG}
-    ),
     
-    FUTURISTISCH(
-        new Temperature[]{Temperature.KUEHL, Temperature.STERIL, Temperature.NORMAL},
-        new Smell[]{Smell.METALLISCH, Smell.STERIL, Smell.CHEMISCH},
-        new Sound[]{Sound.MECHANISCH, Sound.SUMMEND, Sound.DIGITALES_RAUSCHEN},
-        new Sky[]{Sky.LEUCHTEND, Sky.HOLOGRAPHISCH, Sky.NEONBLAU, Sky.DUNKEL},
-        new Ground[]{Ground.METALLISCH, Ground.GLAS, Ground.SCHWEBEND},
-        new Lighting[]{Lighting.NEON, Lighting.KUENSTLICH, Lighting.STROBOSKOPISCH},
-        new Weather[]{Weather.ENERGIEBLITZE, Weather.KUENSTLICHER_REGEN, Weather.WINDSTILL}
-    ),
+    /**
+     * =========================================================
+     * =========================================================
+     *              Hierher kommen die Fehler!!!
+     * =========================================================
+     * =========================================================
+     * 
+     * KOMPLETTÜBERHOLUNG HIER NÖTIG!
+     * 
+     * Erstmal werden die AtmophereTypen vollkommen überholt
+     * Außerdem werden in Zukunft die Atmosphäre-Typen in der Area ausgegeben und nichtmehr Dimensionsabhängig sein
+     * Dimensionen und Areale erlauben beide verschiedene Eigenschaften-Typen
+     * Daraus wird dann ein Pool gebaut und entsprechend für die Area generiert.
+     * Vielleicht helfen Prioritätenlisten oder ähnliches. Bitte hierzu nochmal genauer Gedanken machen.
+     * 
+     * Zuerst wird ein funktionsfähiger Dimensions- und Arealgenerator gebaut, anschließend kann dann das Spiel implementiert werden.
+     * 
+     * 
+     * 
+     * 
+     * 
+     * ----------------------------------------
+     * Weitere Überlegungen
+     * ----------------------------------------
+     * 
+     * Areale werden generiert. In einem Areal herrscht eine sound-kulisse.
+     * Dazu muss aber auch gewusst werden, was in dem Areal alles zu finden ist.
+     * Dementsprechend muss die Atmosphäre gesetzt/erzählt werden.
+     */
     
-    KOSMISCH(
-        new Temperature[]{Temperature.EISIG, Temperature.SCHWANKEND, Temperature.NULL},
-        new Smell[]{Smell.VAKUUM, Smell.FREMDARTIG},
-        new Sound[]{Sound.ECHO, Sound.KOSMISCHES_RAUSCHEN, Sound.NULL},
-        new Sky[]{Sky.STERNENMEER, Sky.SCHWARZES_LOCH, Sky.NEBULOES, Sky.LEUCHTEND},
-        new Ground[]{Ground.KRISTALLIN, Ground.SCHWEBEND, Ground.ASTEROIDENSTAUB, Ground.NULL},
-        new Lighting[]{Lighting.STERNENLICHT, Lighting.PULSIEREND, Lighting.DUNKEL},
-        new Weather[]{Weather.METEORSCHAUER, Weather.SONNENWIND, Weather.WINDSTILL}
-    ),
-    
-    ORGANISCH(
-        new Temperature[]{Temperature.WARM, Temperature.SCHWUEL, Temperature.KOERPERWARM},
-        new Smell[]{Smell.VEGETATION, Smell.VERWESUNG, Smell.SUESSLICH, Smell.PILZARTIG},
-        new Sound[]{Sound.ATMEND, Sound.SCHLEIMIG, Sound.WUCHERND, Sound.PULSIEREND},
-        new Sky[]{Sky.FLEISCHIG, Sky.GRUENLICH, Sky.MEMBRAN},
-        new Ground[]{Ground.FLEISCHIG, Ground.WUCHERND, Ground.SCHLEIMIG},
-        new Lighting[]{Lighting.BIOLUMINESZENT, Lighting.GEDAEMPFT, Lighting.PULSIEREND},
-        new Weather[]{Weather.SPORENNEBEL, Weather.ENZYMATISCH, Weather.SCHWUEL}
-    ),
-    
-    VERZERRT(
-        new Temperature[]{Temperature.PARADOX, Temperature.SCHWANKEND, Temperature.NULL},
-        new Smell[]{Smell.PARADOX, Smell.SYNÄSTHETISCH, Smell.FREMDARTIG},
-        new Sound[]{Sound.RUECKWAERTS, Sound.DIMENSIONSRISS, Sound.UNHEIMLICH, Sound.VERZERRT},
-        new Sky[]{Sky.FRAGMENTIERT, Sky.KALEIDOSKOPISCH, Sky.FALSCH, Sky.UNENDLICH},
-        new Ground[]{Ground.NICHT_EUKLIDISCH, Ground.FLUESSIG, Ground.SCHWANKEND, Ground.NULL},
-        new Lighting[]{Lighting.UNMOEGLICH, Lighting.STROBOSKOPISCH, Lighting.VERSCHOBEN},
-        new Weather[]{Weather.REALITAETSBRUECHE, Weather.ZEITSCHLEIFEN, Weather.PARADOX}
-    ),
-    
-    INDUSTRIELL(
-        new Temperature[]{Temperature.HEISS, Temperature.RAUCHIG, Temperature.STICKIG},
-        new Smell[]{Smell.OEL, Smell.RAUCH, Smell.METALLISCH, Smell.CHEMISCH},
-        new Sound[]{Sound.HÄMMERND, Sound.DAMPFEND, Sound.KREISCHEND},
-        new Sky[]{Sky.RAUCHVERHANGEN, Sky.ASCHGRAU, Sky.ORANGE},
-        new Ground[]{Ground.EISENROST, Ground.PFLASTER, Ground.GITTER},
-        new Lighting[]{Lighting.FLAMMEN, Lighting.GEDAEMPFT, Lighting.FUNKENFLUG},
-        new Weather[]{Weather.ASCHEREGEN, Weather.HITZEWELLE, Weather.RUSS}
-    ),
-    
-    MYSTISCH(
-        new Temperature[]{Temperature.KUEHL},
-        new Smell[]{Smell.WEIHRAUCH, Smell.MAGISCH, Smell.DUFTEND},
-        new Sound[]{Sound.GESANG, Sound.GLOCKEN, Sound.FLUESTERN, Sound.MELODISCH},
-        new Sky[]{Sky.MAGISCH, Sky.AURORAL, Sky.STERNENMEER, Sky.VIOLETT},
-        new Ground[]{Ground.RUNEN, Ground.KRISTALLIN, Ground.NEBELHAFT},
-        new Lighting[]{Lighting.MAGISCH, Lighting.GEISTERHAFT, Lighting.AURORAL},
-        new Weather[]{Weather.MAGIESTROEME, Weather.NEBLIG, Weather.ÄTHERWIND}
-    ),
-    
-    VERFALLEN(
-        new Temperature[]{Temperature.KALT, Temperature.SCHWUEL, Temperature.MODRIG},
-        new Smell[]{Smell.VERWESUNG, Smell.SCHIMMEL, Smell.MODRIG, Smell.FAEULNIS},
-        new Sound[]{Sound.KNARZEND, Sound.TROPFEND, Sound.ECHO, Sound.NULL},
-        new Sky[]{Sky.BLEICH, Sky.DUNKEL, Sky.ZERBROCHEN},
-        new Ground[]{Ground.VERFAULT, Ground.ZERBROCHEN, Ground.UEBERWUCHERT},
-        new Lighting[]{Lighting.DUNKEL, Lighting.DAEMMERIG, Lighting.VERFALLEND},
-        new Weather[]{Weather.DAUERREGEN, Weather.NEBLIG, Weather.WINDSTILL}
-    ), 
-    
-    ERDAEHNLICH(
-        new Temperature[]{Temperature.NORMAL, Temperature.KOERPERWARM, Temperature.WARM, Temperature.KUEHL},
-        new Smell[]{Smell.VEGETATION, Smell.DUFTEND, Smell.ERDIG},
-        new Sound[]{Sound.NULL, Sound.RUHIG, Sound.TIERISCH},
+    NORMAL(
+        new Temperature[]{Temperature.WARM, Temperature.KUEHL, Temperature.NORMAL},
+        new Smell[]{Smell.ERDIG, Smell.BLUMIG, Smell.HARZIG},
+        new Sound[]{Sound.PLÄTSCHERN, Sound.RUHIG, Sound.TIERISCH, Sound.URBAN},
         new Sky[]{Sky.KLAR, Sky.WOLKENVERHANGEN},
-        new Ground[]{Ground.ERDIG, Ground.STEINIG, Ground.UEBERWUCHERT, Ground.WAESSRIG},
-        new Lighting[]{Lighting.DUNKEL, Lighting.HELL, Lighting.STERNENLICHT},
-        new Weather[]{Weather.KLAR, Weather.NEBLIG, Weather.WINDSTILL, Weather.SCHWUEL}
+        new Ground[]{Ground.ERDIG, Ground.PFLASTER, Ground.STEINIG, Ground.SUMPFIG, Ground.UEBERWUCHERT},
+        new Lighting[]{Lighting.DAEMMERIG, Lighting.DUNKEL, Lighting.HELL, Lighting.STERNENLICHT},
+        new Weather[]{Weather.SCHWUEL, Weather.KLAR, Weather.NEBLIG, Weather.WINDSTILL}
     );
     
 
@@ -103,21 +54,16 @@ public enum Atmosphere {
      * Temperature
      */
     public enum Temperature {
-        EISIG("Eisige Kälte beißt in deine Haut.","Die Kälte hat hier eine Stimme, ein leises Sirren wie altes Eis.","Die Luft ist so kalt, dass sie beim Einatmen kristallisiert.","Frost zeichnet feine Muster auf deine Kleidung, ohne sie zu berühren.","Ein eisiger Wind schneidet durch deine Kleidung."),
-        KALT("Kalte Luft umgibt dich.","Ein nüchterner, scharfer Hauch von Winter liegt in der Luft.","Kälte krabbelt über deine Haut."),
-        KUEHL("Eine angenehme Kühle liegt in der Luft."), 
-        NORMAL("Die Temperatur hier ist erträglich.","Die Temperatur ist angenehm.","Hier ist es nicht zu warm, nicht zu kalt.","Weder zitterst, noch schwitzt du."),
-        KOERPERWARM("Die Umgebung fühlt sich körperwarm an."),
-        SCHWUEL("Die Umgebung fühlt sich feucht-warm an."), 
-        WARM("Die Umgebung ist angenehm warm.","Sonnenstrahlen wärmen deine Haut.","Wärme umgibt dich"),
-        HEISS("Ballende Hitze steigt auf.","Drückende Hitze macht jeden Atemzug schwer.","Drückende Hitze macht jeden Atemzug zur Qual."),
-        RAUCHIG("Heiße, rauchige Luft brennt in deiner Lunge."), 
-        STICKIG("Stickige Luft erschwert das Atmen."), 
-        MODRIG("Modrige Feuchtigkeit durchdringt alles."),
-        STERIL("Die Luft fühlt sich steril und leblos an."), 
-        SCHWANKEND("Die Temperatur schwankt unruhig.","Die Luft schwankt unaufhörlich zwischen warm und kühl.","Wärme und Kälte wechseln in kleinen, kaum planbaren Intervallen."), 
-        NULL("Temperatur hat hier keine Bedeutung.","Es gibt Luftzustand, aber kein Empfinden von warm oder kalt."),
-        PARADOX("Es ist gleichzeitig warm und kalt.","Die Temperatur ist seltsam...","Zwei Temperaturzustände existieren parallel statt im Widerspruch.","Die Luft fühlt sich doppeldeutig, aber stabil an.");
+        EISIG("Eisige Kälte beißt in deine Haut.", "Die Luft ist so kalt, dass sie beim Einatmen kristallisiert.", "Frost zeichnet feine Muster auf deine Kleidung, ohne sie zu berühren.","Ein eisiger Wind schneidet durch deine Kleidung."),
+        KALT("Kalte Luft umgibt dich.", "Kälte kriecht deinen Nacken hinab."),
+        KUEHL("Eine angenehme Kühle liegt in der Luft.", "Ein kühler Hauch zieht durch die Luft."), 
+        NORMAL("Die Temperatur hier ist erträglich.", "Die Temperatur ist angenehm.", "Hier ist es nicht zu warm, nicht zu kalt"),
+        WARM("Die Umgebung ist angenehm warm.", "Wärme umgibt dich.", "Die Temperatur ist wohlig warm."),
+        HEISS("Ballende Hitze steigt auf.", "Drückende Hitze macht jeden Atemzug schwer.", "Drückende Hitze macht jeden Atemzug zur Qual."),
+        SCHWUEL("Die Umgebung fühlt sich feucht-warm an.", "Schwüle Wärme klebt an deiner Kleigung."), 
+        SCHWANKEND("Die Temperatur schwankt unruhig", "Dein Körper kann sich nicht entscheiden, ob er zittern oder schwitzen soll.", "Hitze- und Kälteschübe wechseln sich ab."), 
+        NULL(""),
+        PARADOX("Es ist gleichzeitig warm und kalt.", "Die Temperatur fühlt sich seltsam an");
 
         private final String[] descriptions;
         Temperature(String... descriptions) { this.descriptions = descriptions; }
@@ -129,28 +75,23 @@ public enum Atmosphere {
      * Smell
      */
     public enum Smell {
-        METALLISCH("Ein scharfer, metallischer Geruch liegt in der Luft.","Ein Duft von frisch geschliffenem Eisen und kalten Maschinenteilen erfüllt dich."),
-        DUFTEND("Angenehme Düfte erfüllen die Atmosphäre.","Ein leichter, blumiger Hauch schafft ein Gefühl von Frische."),
-        MODRIG("Modriger Geruch steigt auf.","Es riecht nach feuchtem Holz, das zu lange im Schatten lag."),
-        ERDIG("Der Geruch von feuchter Erde ist allgegenwärtig."),
-        SCHARF("Ein scharfer, beißender Geruch sticht in die Nase.","Die Luft kratzt im Rachen und wirkt unangenehm trocken."),
-        STERIL("Die Luft riecht steril und desinfiziert.","Ein klinischer Reinheitsgeruch liegt über Allem, fast ohne natürliche Note."),
-        CHEMISCH("Chemische Dämpfe reizen deine Sinne.","Ein künstlicher Geruch erreicht dich, der leicht stechend im Kopf bleibt."),
-        VAKUUM(""),
-        FREMDARTIG("Ein vollkommen unbekannter Geruch umgibt dich.","Die Gerüche kannst du kaum einordnen, ungewohnt aber nicht zwingend unangenehm."),
-        VEGETATION("Der intensive Geruch von Pflanzenwuchs dominiert.","Grüne, chlorophyllartige Noten riechen natürlich und lebendig."),
-        VERWESUNG("Süßlicher Verwesungsgeruch hängt in der Luft.","Süßlicher Verwesungsgeruch hängt in der Luft. Schwer und penetrant, mit klebrigen, fauligen Nuancen.","Es riecht schwer und penetrant, mit klebrigen, fauligen Nuancen."),
-        SUESSLICH("Ein unheimlich süßlicher Duft ist präsent."),
-        PILZARTIG("Pilzartiger, erdiger Geruch erfüllt die Luft.","Die Atmosphäre erinnert an Moos und dunkle Waldböden."),
-        PARADOX("Der Geruch ist widersprüchlich und unmöglich."),
-        SYNÄSTHETISCH("Du riechst Farben und schmeckst Töne.","Es gibt keinen klassischer Geruch, es fühlt sich an wie ein sensorisches Gesamtgefühl."),
-        OEL("Schwerer Ölgeruch klebt in der Luft.","Ein Geruch, so schmierig, dunkel und langanhaltend in der Wahrnehmung."),
-        RAUCH("Beißender Rauch brennt in den Augen.","Es riecht verkohlt, trocken und nach schwelender Asche."),
-        SCHWEFEL("Schwefelgestank erfüllt die Atmosphäre.","Ein faulig-gelber Gestank, schwer und chemisch zugleich."),
-        WEIHRAUCH("Weihrauch-Duft schwebt mystisch umher.","Es riecht Würzig, aromatisch und leicht harzig warm."),
-        MAGISCH("Ein unerklärlicher, magischer Duft.","Ein seltsamer Geruch liegt in der Luft; kaum greifbar aber spürbar präsent."),
-        SCHIMMEL("Schimmelgeruch durchdringt alles.","Es riecht pelzig und nach Schimmel, feucht und muffig."),
-        FAEULNIS("Fäulnis und Zerfall dominieren die Sinne.");
+        ERDIG("Ein schwerer, erdiger Geruch erreicht deine Nase."),
+        MOOSIG("Es riecht nach feuchtem Moos und nasser Erde.", "Es riecht nach tiefem Wald und Moos.", "Es riecht nach feuchtem Moos."),
+        RAUCHIG("Ein dicker Rauch hängt in der Luft.", "Ein rauchiger Geruch reizt deinen Hals."),
+        KOKELIG("Es riecht verkokelt und als hätte es gebrannt."),
+        METALLISCH("Ein Geruch nach Metall liegt in der Luft.", "Scharfer, metallischer Geruch legt sich auf deine Zunge."),
+        ÖLIG("Die Luft ist schwer und dunkel - es riecht nach Öl.", "Es riecht nach schwerem Öl."),
+        CHLORIG("Ein stechender Chlor-Geruch liegt in der Luft.", "Es riecht hier wie im Schwimmbad!", "Ein beißender Chlor-Geruch erfüllt dich."),
+        SYNTHETISCH("Es riecht nach Plastik und Gummi.", "Es riecht hier wie im Krankenhaus.", "Künstlcher Geruch wie Gummi kribbelt in deiner Nase."),
+        BLUMIG("Sanfte, blumige Süße weht in eine Nase.", "Ein leichter, blumiger Duft liegt in der Luft.", "Es riecht nach einer schönen Blumenwiese."),
+        FRUCHTIG("Fruchtige Noten liegen in der Luft.", "Es riecht süß und saftig.", "In deine Nase weht der Duft nach süßen Früchten."),
+        HARZIG("Es riecht nach frischem Kiefernholz.", "Es riecht nach warmem und dichtem Harz"),
+        MUFFIG("Ein muffiger Geruch liegt in der Luft.", "Es riecht nach Staub und stickigen, alten Räumen.", "Es riecht irgendiwe alt und muffig."),
+        MODRIG("Es riecht modrig und schwer.", "Es riecht nach Verfall und feuchtem Moder.", "Modergeruch liegt schwer über der Umgebung."),
+        SALZIG("Es duftet nach Meer und Weite.", "Ein starker Salzgeruch liegt drückend in der Luft.", "Es riecht nach Salz und Ozeanen."),
+        KELLERFEUCHT("Es riecht hier nach feuchtem, alten Keller.", "Es riecht nach altem, feuchtem Stein.", "Es ist feucht und riecht nach Keller."),
+        WÜRZIG("Du wirst von einem Duft der exotischsten Gewürze erfüllt.", "Die verschiedensten Gewürze kitzeln in deiner Nase.", "Es riecht nach Kräuter und Pfeffer.", "Viele verschiedene Gewürze duften in der Luft."),
+        NULL;
 
         private final String[] descriptions;
         Smell(String... descriptions) { this.descriptions = descriptions; }
@@ -164,34 +105,23 @@ public enum Atmosphere {
      * Sound
      */
     public enum Sound { 
-        RUHIG("Friedliche Stille umgibt dich.","Nur feinste Umgebungsgeräusche sind wahrnehmbar."),
-        LAUT("Lauter Lärm erfüllt die Luft.","Geräusche überschlagen sich auf chaotische Weise.","Geräusche überschlagen sich und wirken chaotisch."),
-        MECHANISCH("Mechanisches Rattern ist zu hören.","Metallisches Klicken begleitet deine Bewegungen."),
-        TIERISCH("Tierische Laute hallen durch die Gegend.","Rufe und Bewegungsgeräusche umgeben dich."),
-        UNHEIMLICH("Seltsame, schwer einzuordnende Geräusche sind präsent."),
-        NULL("Absolute Stille herrscht - unnatürlich still.","Es gibt keinen Wind, kein Echo, keine Geräusche."),
-        ECHO("Jedes Geräusch hallt ungewöhnlich lang nach.","Schritte hallen mehrfach von unsichtbaren Wänden wieder."),
-        SUMMEND("Ein konstantes Summen liegt in der Luft.","Du hörst einen gleichmäßigen, tiefen und kaum zuordbaren Ton."),
-        DIGITALES_RAUSCHEN("Feines, digitales Knistern ist wahrnehmbar.","Singaltöne sind wie ein Rauschen im Hintergrund zu hören."),
-        KOSMISCHES_RAUSCHEN("Ein fernes, gleichmäßiges Grundrauschen ist hörbar.","Ein Rauschen ist zu hören. Es klingt wie eine sehr entfernte Frequenz."),
-        ATMEND("Rhythmische Klangschwankungen sind zu hören."),
-        SCHLEIMIG("Weiche, gleitende Geräusche durchziehen die Umgebung.","Töne wirken gedämpft und leicht organisch.","Deine Schritte hören sich an, als würdest du über Schleim laufen."),
-        WUCHERND("Knackende, leichte Strukturgeräusche sind wahrnehmbar."),
-        PULSIEREND("Ein dezentes, rhythmisches Klopfen ist präsent."),
-        GROLLEND("Tiefes, fernes Grollen schwingt durch den Boden."),
-        KNACKEN("Vereinzeltes Knacken ist zu hören."),
-        RUECKWAERTS("Manche Klänge wirken zeitlich verschoben.","Geräuschverläufe scheinen an ihrem Ende zu beginnen.","Geräuschverläufe scheinen am Ende zu beginnen."),
-        DIMENSIONSRISS("Ein abruptes, schneidendes Brummen entsteht kurzzeitig."),
-        VERZERRT("Geräusche klingen irgendwie falsch.","Frequenzen scheinen leicht verschoben und unharmonisch."),
-        HÄMMERND("Wiederholtes, hartes Klopfen ist hörbar."),
-        DAMPFEND("Zischende, weiche Druckgeräusche sind wahrnehmbar."),
-        KREISCHEND("Hohes Kreischen taucht in Spitzen auf."),
-        GESANG("Ferne, stimmähnliche Klangmuster liegen im Raum."),
-        GLOCKEN("Dumpfe, entfernte Glockentöne sind hörbar."),
-        FLUESTERN("Leises, undeutliches Stimmenrauschen ist präsent."),
-        MELODISCH("Melodische Tonschleifen sind wahrnehmbar.","Ein melodisches Motiv klingt durch die Gegend. Es scheint sich zu wiederholen."),
-        KNARZEND("Holz- oder strukturähnliches Knarzen durchzieht die Umgebung."),
-        TROPFEND("Regelmäßiges Tropfen ist hörbar.");
+        RUHIG("Friedliche Stille umgibt dich."),
+        RATTERN("Lautes Rattern ist zu hören.", "Du hörst lautes Rattern - ähnlich wie bei einem Zug."),
+        TIERISCH("Tiergeräusche erfüllen die Luft.", "Laute Tiere sind überall zu hören."), 
+        KNACKEN("Du hörst wiederholt lautes Knacken.", "Immer wieder knackt es laut."),
+        GROLLEN("Ein tiefes Grollenersch erschüttert dich.", "Tiefes, markerschütterndes Grollen ertönt."),
+        VERZERRT("Verzerrte Gräusche klirren, die kaum identifiierbar sind.", "Die Geräuschkulisse ist surreal - kaum identifizierbar."),
+        HALLEND("Echo schallt überall zu dir zurück."),
+        DUMPF("Geräusche wirken hier ganz dumpf.", "Die Umgebung verschlingt alle Geräusche"),
+        KNISTERN("Die Luft knistert energisch.", "Du hörst lautes knistern."),
+        ZISCHEN("Druckvolles Zischen erfüllt die Luft.", "Lautes zischen ertönt."),
+        PLÄTSCHERN("In der Nähe scheint es zu plätschern.", "Es plätschert hörbar.", "Plätschern erreicht deine Ohren."),
+        SCHRILL("Schrille Töne erschrecken dich.", "Ein schrilles Geräusch fährt in Mark und Bein."),
+        SURREND("Konstantes surren ertönt die Umgebung"),
+        FLUESTERN("In der Nähe hörst du leises Flüstern.", "Geheimnisvolles Flüstern dringt in deine Ohren"),
+        MELODISCH("Es herrscht eine melodische Atmospähre, voller Lieder und Gesang.", "Unbekannte Melodien erklingen."),
+        RAUSCHEN("Sanftes rauschen bewegt die Umgebung"),
+        URBAN("Städtisches Treiben ist zu hören.");
 
         private final String[] descriptions;
         Sound(String... descriptions) { this.descriptions = descriptions; }
@@ -201,7 +131,7 @@ public enum Atmosphere {
 
     
     /**
-     * Sky
+     * Sky - ab hier noch weiter überarbeiten bitte!
      */
     public enum Sky { 
         KLAR("Der Himmel ist kristallklar."),

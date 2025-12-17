@@ -1,7 +1,7 @@
 package game.area;
 
-import java.util.Random;
-import game.dimension.Atmosphere;
+import game.dimension.Genre;
+import java.util.*;
 
 /**
  * Ich möchte hier weniger Archetypen-spezifisch arbeiten
@@ -22,127 +22,132 @@ import game.dimension.Atmosphere;
  * Biome/Areal: grobe Umgebung (Wald, Stadt, Raumschiff-Deck)
  * POI/Location: konkrete Orte innerhalb des Areals (Labor, Schrein, Markt, Korridor)
  * Encounter: einzelne Begegnungen oder interaktive Events innerhalb einer Location/eines Areals
-*/
+ * 
+ * 
+ *     public static AreaType getRandomWeighted(Random rng) {
+        return switch (rng.nextInt(100)) {
+            case 0,1,2,3,4 -> TRADER;
+            case 5,6,7,8,9,10,11,12 -> QUEST_GIVER;
+            case 13,14,15,16,17 -> GUARDIAN;
+            case 18,19,20 -> TIME_ECHO;
+            case 21,22,23,24,25 -> WILD_BEAST;
+            case 26,27,28,29 -> LOST_AI;
+            case 30,31,32,33 -> PORTAL_POI;
+            case 34,35,36,37,38 -> GRAVE_POI;
+            case 39,40,41 -> NEXUS;
+            default -> values()[rng.nextInt(values().length)];
+        };
+    }
 
+* So könnte eine Gewichtete AreaGeneration aussehen! 
+*/
+/**
+ * AreaTypes können genre-spezifisch oder universal sein
+ */
 public enum AreaType {
-    // Natürliche Areale
-    WILDERNESS("Wildnis", 0.3f, 0.5f),
-    FOREST("Wald", 0.4f, 0.4f),
-    SWAMP("Sumpf", 0.3f, 0.6f),
-    DESERT("Wüste", 0.5f, 0.5f),
-    MOUNTAIN("Gebirge", 0.4f, 0.6f),
-    CAVE("Höhle", 0.5f, 0.7f),
-    OCEAN("Ozean", 0.3f, 0.5f),
     
-    // Zivilisations-Areale
-    SETTLEMENT("Siedlung", 0.7f, 0.2f),
-    CITY("Stadt", 0.8f, 0.3f),
-    VILLAGE("Dorf", 0.7f, 0.2f),
-    OUTPOST("Außenposten", 0.6f, 0.4f),
-    MARKET("Markt", 0.8f, 0.1f),
+    // === UNIVERSELLE AREALE (funktionieren überall) ===
+    WILDERNESS("Wildnis", 0.5f, -1, true),
+    RUINS("Ruinen", 0.4f, -1, true),
+    CROSSROADS("Kreuzung", 0.2f, -1, true),
     
-    // Verfallene Areale
-    RUIN("Ruine", 0.3f, 0.6f),
-    TEMPLE("Tempel", 0.5f, 0.5f),
-    GRAVEYARD("Friedhof", 0.4f, 0.5f),
-    ABANDONED_CITY("Verlassene Stadt", 0.3f, 0.7f),
-    CRYPT("Krypta", 0.4f, 0.8f),
+    // === SCI-FI SPEZIFISCH ===
+    SPACE_STATION("Raumstation", 0.3f, 1, false),
+    REACTOR_CORE("Reaktorkern", 0.7f, 1, false),
+    CRYO_BAY("Kryokammer", 0.2f, 1, false),
     
-    // Technologische Areale
-    FACTORY("Fabrik", 0.6f, 0.5f),
-    LABORATORY("Labor", 0.7f, 0.4f),
-    STATION("Station", 0.7f, 0.3f),
-    REACTOR("Reaktor", 0.5f, 0.7f),
-    DATACORE("Datenkern", 0.6f, 0.5f),
+    // === FANTASY SPEZIFISCH ===
+    ENCHANTED_FOREST("Verzauberter Wald", 0.4f, -1, false),
+    ANCIENT_TEMPLE("Alter Tempel", 0.5f, 2, false),
+    MAGE_TOWER("Magierturm", 0.3f, 1, false),
     
-    // Kosmische Areale
-    VOID("Leere", 0.2f, 0.8f),
-    NEBULA("Nebel", 0.3f, 0.6f),
-    ASTEROID_FIELD("Asteroidenfeld", 0.4f, 0.7f),
-    PORTAL("Portal", 0.5f, 0.6f),
-    RIFT("Riss", 0.2f, 0.9f),
+    // === HISTORICAL SPEZIFISCH ===
+    MEDIEVAL_VILLAGE("Mittelalterliches Dorf", 0.2f, -1, false),
+    BATTLEFIELD("Schlachtfeld", 0.6f, -1, false),
     
-    // Organische Areale
-    HIVE("Brutkolonie", 0.4f, 0.8f),
-    GARDEN("Garten", 0.6f, 0.3f),
-    MEMBRANE("Membran", 0.3f, 0.7f),
-    FLESH_PIT("Fleischgrube", 0.2f, 0.9f),
-    SPORE_FIELD("Sporenfeld", 0.3f, 0.6f),
+    // === CONTEMPORARY SPEZIFISCH ===
+    CITY_DISTRICT("Stadtviertel", 0.3f, -1, false),
+    SUBWAY_TUNNEL("U-Bahn-Tunnel", 0.4f, -1, false);
     
-    // Mystische Areale
-    SHRINE("Schrein", 0.6f, 0.4f),
-    SANCTUM("Sanktum", 0.7f, 0.3f),
-    NEXUS("Nexus", 0.5f, 0.6f),
-    ALTAR("Altar", 0.6f, 0.5f),
-    MONOLITH("Monolith", 0.5f, 0.7f);
     
     private final String displayName;
-    private final float baseStability;
     private final float baseHostility;
+    private final int maxOccurrences; // -1 = unbegrenzt
+    private final boolean isUniversal;
     
-    AreaType(String displayName, float baseStability, float baseHostility) {
+    AreaType(String displayName, float baseHostility, int maxOccurrences, boolean isUniversal) {
         this.displayName = displayName;
-        this.baseStability = baseStability;
         this.baseHostility = baseHostility;
+        this.maxOccurrences = maxOccurrences;
+        this.isUniversal = isUniversal;
     }
     
     public String getDisplayName() { return displayName; }
-    public float getBaseStability() { return baseStability; }
     public float getBaseHostility() { return baseHostility; }
+    public int getMaxOccurrences() { return maxOccurrences; }
+    public boolean isUniversal() { return isUniversal; }
+    
     
     /**
-     * Wählt einen passenden AreaType basierend auf Atmpsphere
+     * Gibt passende AreaTypes für ein Genre zurück
      */
-    public static AreaType getRandomForAtmosphere(Random rng, Atmosphere atmosphere) {
-        AreaType[] options;
+    public static List<AreaType> getTypesForGenre(Genre genre) {
+        List<AreaType> types = new ArrayList<>();
         
-        switch (atmosphere) {
-            case PRAEHISTORISCH -> {options = new AreaType[]
-                    {WILDERNESS, FOREST, SWAMP, CAVE, MOUNTAIN};}
-            case FUTURISTISCH -> {options = new AreaType[]
-                    {CITY, STATION, LABORATORY, FACTORY, DATACORE, OUTPOST};}
-            case KOSMISCH -> {options = new AreaType[]
-                    {VOID, NEBULA, ASTEROID_FIELD, PORTAL, RIFT, STATION};}
-            case ORGANISCH -> {options = new AreaType[]
-                    {HIVE, GARDEN, MEMBRANE, FLESH_PIT, SPORE_FIELD, SWAMP};}
-            case VERZERRT -> {options = new AreaType[]
-                    {RIFT, PORTAL, VOID, NEXUS, MONOLITH};}
-            case INDUSTRIELL -> {options = new AreaType[]
-                    {FACTORY, REACTOR, CITY, OUTPOST, RUIN};}
-            case MYSTISCH -> {options = new AreaType[]
-                    {SHRINE, SANCTUM, TEMPLE, ALTAR, MONOLITH, NEXUS};}
-            case VERFALLEN-> {options = new AreaType[]
-                    {RUIN, ABANDONED_CITY, GRAVEYARD, CRYPT, TEMPLE};}
-            default -> {options = new AreaType[]
-                    {WILDERNESS, SETTLEMENT, RUIN, CAVE};}
+        // Universelle Areale hinzufügen
+        for (AreaType type : values()) {
+            if (type.isUniversal) {
+                types.add(type);
+            }
         }
         
-        return options[rng.nextInt(options.length)];
+        // Genre-spezifische Areale hinzufügen
+        switch (genre.getLocation()) {
+            case SCI_FI -> {
+                types.add(SPACE_STATION);
+                types.add(REACTOR_CORE);
+                types.add(CRYO_BAY);
+            }
+            case FANTASY -> {
+                types.add(ENCHANTED_FOREST);
+                types.add(ANCIENT_TEMPLE);
+                types.add(MAGE_TOWER);
+            }
+            case HISTORICAL -> {
+                types.add(MEDIEVAL_VILLAGE);
+                types.add(BATTLEFIELD);
+            }
+            case CONTEMPORARY -> {
+                types.add(CITY_DISTRICT);
+                types.add(SUBWAY_TUNNEL);
+            }
+        }
+        
+        return types;
     }
     
+    
     /**
-     * Gibt eine Liste von AreaTypes zurück, die gut zur Atmosphere passen
+     * Wählt einen zufälligen passenden AreaType aus
      */
-    public static AreaType[] getAllForAtmosphere(Atmosphere atmosphere) {
-        switch (atmosphere) {
-            case PRAEHISTORISCH -> { return new AreaType[]
-                    {WILDERNESS, FOREST, SWAMP, CAVE, MOUNTAIN, DESERT};}
-            case FUTURISTISCH -> { return new AreaType[]
-                    {CITY, STATION, LABORATORY, FACTORY, DATACORE, OUTPOST, REACTOR};}
-            case KOSMISCH -> {return new AreaType[]
-                    {VOID, NEBULA, ASTEROID_FIELD, PORTAL, RIFT, STATION};}
-            case ORGANISCH -> {return new AreaType[]
-                    {HIVE, GARDEN, MEMBRANE, FLESH_PIT, SPORE_FIELD, SWAMP, FOREST};}
-            case VERZERRT -> {return new AreaType[]
-                    {RIFT, PORTAL, VOID, NEXUS, MONOLITH, ABANDONED_CITY};}
-            case INDUSTRIELL -> {return new AreaType[]
-                    {FACTORY, REACTOR, CITY, OUTPOST, RUIN, LABORATORY};}
-            case MYSTISCH -> {return new AreaType[]
-                    {SHRINE, SANCTUM, TEMPLE, ALTAR, MONOLITH, NEXUS, GRAVEYARD};}
-            case VERFALLEN -> {return new AreaType[]
-                    {RUIN, ABANDONED_CITY, GRAVEYARD, CRYPT, TEMPLE, OUTPOST};}
-            default -> {return new AreaType[]
-                    {WILDERNESS, SETTLEMENT, RUIN, CAVE, FOREST};}
+    public static AreaType getRandomForGenre(Random rng, Genre genre, Map<AreaType, Integer> occurrences) {
+        List<AreaType> available = getTypesForGenre(genre);
+        
+        // Filtere Typen, die ihr Maximum erreicht haben
+        available.removeIf(type -> {
+            if (type.maxOccurrences == -1) return false; // Unbegrenzt
+            int count = occurrences.getOrDefault(type, 0);
+            return count >= type.maxOccurrences;
+        });
+        
+        if (available.isEmpty()) {
+            // Fallback auf universelle Typen ohne Limit
+            available = new ArrayList<>();
+            for (AreaType type : values()) {
+                if (type.isUniversal) available.add(type);
+            }
         }
+        
+        return available.get(rng.nextInt(available.size()));
     }
 }

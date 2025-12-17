@@ -1,6 +1,7 @@
 package game;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -20,7 +21,7 @@ public class Menu extends JFrame {
         super("Menü");
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 400);
+        setSize(UIConfig.scale(600), UIConfig.scale(400));
         setLocationRelativeTo(null);
         
         setUpButtons();
@@ -30,6 +31,7 @@ public class Menu extends JFrame {
 
     private void setUpButtons() {
         newRunButton = new JButton();
+        newRunButton.setFont(UIConfig.scaledFont("SansSerif", Font.BOLD, 18));
         newRunButton.addActionListener(l -> {
                 SwingUtilities.invokeLater(() -> {
                     this.dispose();
@@ -44,8 +46,10 @@ public class Menu extends JFrame {
         newRunWithSeedPanel = new JPanel(new BorderLayout());
         
         newRunWithSeedLabel = new JLabel("Hier eigenen Seed eingeben: ");
+        newRunWithSeedLabel.setFont(UIConfig.scaledFont("SansSerif", Font.PLAIN, 16));
 
         newRunWithSeedTextField = new JTextField();
+        newRunWithSeedTextField.setFont(UIConfig.scaledFont("SansSerif", Font.PLAIN, 16));
         newRunWithSeedTextField.addActionListener(l -> {
                 String input = newRunWithSeedTextField.getText().trim();
                 if(!input.isEmpty()) {

@@ -1,11 +1,9 @@
 package game.encounter;
 
-import java.util.Random;
-
-import game.Player;
 import game.dimension.Dimension;
 import game.item.Item;
 import game.item.ItemGenerator;
+import java.util.Random;
 
 public class EncounterGenerator {
     
@@ -19,7 +17,7 @@ public class EncounterGenerator {
         "Lagerhaus", "Bunker", "Garten", "Archiv"
     };
     
-    public static Encounter generate(Random rng, Dimension dimension, Player player) {
+    public static Encounter generate(Random rng, Dimension dimension) {
         int roomType = rng.nextInt(100);
         
         if (roomType < 40) {

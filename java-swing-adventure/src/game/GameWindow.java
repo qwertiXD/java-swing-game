@@ -32,10 +32,10 @@ public class GameWindow extends JFrame {
         // Output-Bereich
         output = new JTextArea();
         output.setEditable(false);
-        output.setFont(new Font("Monospaced", Font.PLAIN, 13));
+        output.setFont(UIConfig.scaledFont("Monospaced", Font.PLAIN, 16));
         output.setBackground(new Color(20, 20, 20));
         output.setForeground(new Color(0, 255, 100));
-        output.setMargin(new Insets(10, 10, 10, 10));
+        output.setMargin(UIConfig.scaledInsets(10, 10, 10, 10));
         add(new JScrollPane(output), BorderLayout.CENTER);
 
         // Input-Bereich
@@ -44,14 +44,14 @@ public class GameWindow extends JFrame {
 
         JLabel prompt = new JLabel(" > ");
         prompt.setForeground(new Color(0, 255, 100));
-        prompt.setFont(new Font("Monospaced", Font.BOLD, 13));
+        prompt.setFont(UIConfig.scaledFont("Monospaced", Font.BOLD, 16));
 
         input = new JTextField();
-        input.setFont(new Font("Monospaced", Font.PLAIN, 13));
+        input.setFont(UIConfig.scaledFont("Monospaced", Font.PLAIN, 16));
         input.setBackground(new Color(30, 30, 30));
         input.setForeground(new Color(0, 255, 100));
         input.setCaretColor(new Color(0, 255, 100));
-        input.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        input.setBorder(BorderFactory.createEmptyBorder(UIConfig.scale(8), UIConfig.scale(8), UIConfig.scale(8), UIConfig.scale(8)));
 
         input.addActionListener(e -> {
             String command = input.getText().trim();
@@ -67,7 +67,7 @@ public class GameWindow extends JFrame {
         add(inputPanel, BorderLayout.SOUTH);
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(UIConfig.scale(800), UIConfig.scale(600));
         setLocationRelativeTo(null);
         setVisible(true);
         input.requestFocus();

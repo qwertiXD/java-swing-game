@@ -1,15 +1,13 @@
 package game;
-import java.util.*;
-
+import game.area.Area;
+import game.area.AreaGraph;
 import game.dimension.Dimension;
 import game.dimension.DimensionGenerator;
 import game.encounter.Encounter;
-import game.encounter.EncounterGenerator;
-import game.area.Area;
-import game.area.AreaGraph;
 import game.item.Item;
 import game.quest.Quest;
 import game.quest.QuestGenerator;
+import java.util.*;
 
 public class GameState {
     
@@ -30,7 +28,6 @@ public class GameState {
     private Area currentArea;
     
     // Räume und Navigation
-    private final List<Encounter> availableEncounters;
     private Encounter currentEncounter;
     
     // Quests
@@ -56,7 +53,6 @@ public class GameState {
         initializeRNGs();
         
         this.player = new Player("Wanderer");
-        this.availableEncounters = new ArrayList<>();
         this.activeQuests = new ArrayList<>();
         this.completedQuests = new ArrayList<>();
         this.worldNPCs = new HashMap<>();
@@ -95,14 +91,10 @@ public class GameState {
         GameWindow.print(currentDimension.getDescription());
         GameWindow.print("");
         
-        // Areal-Graph laden
+        // Areal-Graph laden und Start-Areal betreten
         AreaGraph areaGraph = currentDimension.getAreaGraph();
         currentArea = areaGraph.getCurrentArea();
         areasExplored = 1;
-        
-        GameWindow.print(">>> Du befindest dich im: " + currentArea.getName());
-        GameWindow.print(currentArea.getDescription());
-        GameWindow.print("");
         
         // Startquest
         Quest startQuest = QuestGenerator.generateQuest(eventRng, currentDimension, player);
@@ -112,9 +104,8 @@ public class GameState {
             GameWindow.print("");
         }
         
-        // Navigation auf Areal-Auswahl setzen
-        navMode = NavigationMode.AREA_SELECTION;
-        showAreaSelection();
+        // Direkt ins erste Areal eintreten
+        enterArea(0);
     }
     
     public void showAreaSelection() {
@@ -128,6 +119,7 @@ public class GameState {
         List<Area> connected = graph.getNeighbors(currentArea);
         if (connected.isEmpty()) {
             GameWindow.print("Keine weiteren Areale verfügbar.");
+            GameWindow.print("");
             return;
         }
         
@@ -144,18 +136,6 @@ public class GameState {
         GameWindow.print("Oder: 'status', 'quests', 'map' für Übersicht");
     }
     
-    @SuppressWarnings("unused")
-    private String getDangerIndicator(int danger) {
-        return switch (danger) {
-            case 1 -> "[★☆☆☆☆]";
-            case 2 -> "[★★☆☆☆]";
-            case 3 -> "[★★★☆☆]";
-            case 4 -> "[★★★★☆]";
-            case 5 -> "[★★★★★]";
-            default -> "[???]";
-        };
-    }
-    
     public void enterArea(int index) {
         AreaGraph graph = currentDimension.getAreaGraph();
         
@@ -169,31 +149,39 @@ public class GameState {
             GameWindow.print("");
             GameWindow.print(currentArea.getFullDescription());
             
-            // Räume im Areal generieren
-            generateEncountersForArea();
+            // Areal Betreten
+            GameWindow.print(">>> Du befindest dich im: " + currentArea.getName());
+            GameWindow.print(currentArea.getDescription());
             
-            // Navigation auf Raum-Auswahl setzen
+            // Navigation auf Encounter-Auswahl setzen
             navMode = NavigationMode.ENCOUNTER_SELECTION;
-            showEncounterSelection();
+            
+            // Sofort ersten Encounter starten
+            if (!currentArea.getEncounters().isEmpty()) {
+                GameWindow.print("");
+                enterEncounter(0);
+            } else {
+                GameWindow.print("Dieses Areal scheint leer zu sein.");
+                GameWindow.print("");
+                showAreaSelection();
+            }
         } else {
             GameWindow.print("Ungültige Auswahl!");
         }
     }
     
-    private void generateEncountersForArea() {
-        availableEncounters.clear();
-        int EncounterCount = 2 + eventRng.nextInt(3); // 2-4 Räume pro Areal
-        
-        for (int i = 0; i < EncounterCount; i++) {
-            Encounter encounter = EncounterGenerator.generate(worldRng, currentDimension, player);
-            availableEncounters.add(encounter);
-        }
-    }
-    
     public void showEncounterSelection() {
+        if (currentArea.getEncounters().isEmpty()) {
+            GameWindow.print("Keine weiteren Aktivitäten in diesem Areal.");
+            GameWindow.print("");
+            navMode = NavigationMode.AREA_SELECTION;
+            showAreaSelection();
+            return;
+        }
+        
         GameWindow.print("--- Aktivitäten in: " + currentArea.getName() + " ---");
-        for (int i = 0; i < availableEncounters.size(); i++) {
-            Encounter encounter = availableEncounters.get(i);
+        for (int i = 0; i < currentArea.getEncounters().size(); i++) {
+            Encounter encounter = currentArea.getEncounters().get(i);
             GameWindow.print((i + 1) + ". " + encounter.getName() + " [" + encounter.getDifficulty() + "]");
         }
         GameWindow.print("");
@@ -202,12 +190,12 @@ public class GameState {
     }
     
     public void enterEncounter(int index) {
-        if (index < 0 || index >= availableEncounters.size()) {
+        if (index < 0 || index >= currentArea.getEncounters().size()) {
             GameWindow.print("Ungültige Auswahl!");
             return;
         }
         
-        currentEncounter = availableEncounters.get(index);
+        currentEncounter = currentArea.getEncounters().get(index);
         encountersExplored++;
         
         GameWindow.print("");
@@ -302,18 +290,31 @@ public class GameState {
             GameWindow.print("Entdeckte Orte:");
             for (Area area : explored) {
                 String current = (area == currentArea) ? " <- HIER" : "";
-                GameWindow.print("• " + area.getName() + " " + current);
+                GameWindow.print("• " + area.getName() + current);
             }
         }
         GameWindow.print("");
     }
     
     public void generateNewEncounters() {
-        // Nach einem Raum: zurück zur Areal-Auswahl
-        navMode = NavigationMode.AREA_SELECTION;
-        GameWindow.print("Du verlässt den Ort und kehrst zurück.");
-        GameWindow.print("");
-        showAreaSelection();
+        // Encounter aus der Liste entfernen
+        if (currentEncounter != null) {
+            currentArea.getEncounters().remove(currentEncounter);
+        }
+        
+        // Wenn noch Encounters übrig sind, zeige Auswahl
+        if (!currentArea.getEncounters().isEmpty()) {
+            GameWindow.print("Du verlässt den Ort.");
+            GameWindow.print("");
+            navMode = NavigationMode.ENCOUNTER_SELECTION;
+            showEncounterSelection();
+        } else {
+            // Areal vollständig erkundet - zurück zur Areal-Auswahl
+            GameWindow.print("Du hast dieses Areal vollständig erkundet.");
+            GameWindow.print("");
+            navMode = NavigationMode.AREA_SELECTION;
+            showAreaSelection();
+        }
     }
     
     public void playerDied(String cause) {

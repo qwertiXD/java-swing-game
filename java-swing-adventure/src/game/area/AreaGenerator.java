@@ -1,77 +1,56 @@
 package game.area;
 
-import java.util.*;
 import game.dimension.Dimension;
-import game.dimension.Atmosphere;
+import game.dimension.Genre;
+import game.encounter.Encounter;
+import game.encounter.EncounterGenerator;
+import java.util.*;
 
 public class AreaGenerator {
     
-    // Präfixe für Areal-Namen (passend zu Archetypen)
-    private static final Map<Atmosphere, String[]> ATMOSPHERE_PREFIXES = new HashMap<>();
+    // Adjektive für Namen
+    private static final String[] ADJECTIVES = {
+        "Verlassener", "Dunkler", "Alter", "Verborgener", "Gefrorener",
+        "Brennender", "Vergessener", "Wilder", "Stiller", "Pulsierender"
+    };
     
-    static {
-        ATMOSPHERE_PREFIXES.put(Atmosphere.PRAEHISTORISCH, new String[]{
-            "Urzeitlicher", "Versteinerter", "Prähistorischer", "Fossiler", "Primitiver"
-        });
-        ATMOSPHERE_PREFIXES.put(Atmosphere.FUTURISTISCH, new String[]{
-            "Cyber", "Neo", "Hyper", "Tech", "Synthese", "Quantum"
-        });
-        ATMOSPHERE_PREFIXES.put(Atmosphere.KOSMISCH, new String[]{
-            "Sternen", "Astral", "Kosmischer", "Leerer", "Unendlicher"
-        });
-        ATMOSPHERE_PREFIXES.put(Atmosphere.ORGANISCH, new String[]{
-            "Wuchernder", "Lebender", "Pulsierender", "Organischer", "Verwobener"
-        });
-        ATMOSPHERE_PREFIXES.put(Atmosphere.VERZERRT, new String[]{
-            "Verzerrter", "Fragmentierter", "Paradoxer", "Unmöglicher", "Gebrochener"
-        });
-        ATMOSPHERE_PREFIXES.put(Atmosphere.INDUSTRIELL, new String[]{
-            "Rostiger", "Dampfender", "Industrieller", "Mechanischer", "Stählerner"
-        });
-        ATMOSPHERE_PREFIXES.put(Atmosphere.MYSTISCH, new String[]{
-            "Geheiligter", "Arkaner", "Mystischer", "Uralter", "Ätherischer"
-        });
-        ATMOSPHERE_PREFIXES.put(Atmosphere.VERFALLEN, new String[]{
-            "Verfallener", "Verlorener", "Vergessener", "Toter", "Ruinöser"
-        });
-    }
-    
-    private static final String[] ATMOSPHERIC_MODIFIERS = {
-        "Verborgener", "Endloser", "Dunkler", "Leuchtender", "Stiller",
-        "Wilder", "Seltsamer", "Gefrorener", "Brennender", "Schwebender"
+    // Suffixe für Namen
+    private static final String[] SUFFIXES = {
+        "", " des Vergessens", " der Leere", " der Ewigkeit", " des Echos"
     };
     
     /**
      * Generiert ein einzelnes Areal
      */
-    public static Area generateArea(Random rng, Dimension dimension, int dangerLevel) {
-
-        Atmosphere primary = dimension.getPrimaryAtmosphere().getBlueprint();
-        AreaType type = AreaType.getRandomForAtmosphere(rng, primary);
+    public static Area generateArea(Random rng, Dimension dimension, 
+                                   int dangerLevel, Map<AreaType, Integer> occurrences) {
         
-        String name = generateAreaName(rng, dimension, type);
-        String description = generateDescription(rng, dimension, type);
+        Genre genre = dimension.getGenre();
+        
+        // AreaType wählen (respektiert Occurrence-Limits)
+        AreaType type = AreaType.getRandomForGenre(rng, genre, occurrences);
+        
+        // Occurrence tracken
+        occurrences.put(type, occurrences.getOrDefault(type, 0) + 1);
+        
+        String name = generateAreaName(rng, type);
+        String description = generateDescription(rng, genre, type);
         float hostility = calculateHostility(rng, dimension, type, dangerLevel);
         
-        return new Area(name, description, type, dimension, hostility);
+        List<Encounter> encounters = generateEncounters(rng, dimension);
+
+        return new Area(name, description, type, dimension, hostility, encounters);
     }
     
     /**
      * Generiert prozeduralen Namen für Areal
      */
-    private static String generateAreaName(Random rng, Dimension dimension, AreaType type) {
-
-        Atmosphere archetype = dimension.getPrimaryAtmosphere().getBlueprint();
+    private static String generateAreaName(Random rng, AreaType type) {
         StringBuilder name = new StringBuilder();
         
-        // 60% Chance auf Präfix
+        // 60% Chance auf Adjektiv
         if (rng.nextFloat() < 0.6f) {
-            String[] prefixes = ATMOSPHERE_PREFIXES.get(archetype);
-            if (prefixes != null) {
-                name.append(prefixes[rng.nextInt(prefixes.length)]).append(" ");
-            } else {
-                name.append(ATMOSPHERIC_MODIFIERS[rng.nextInt(ATMOSPHERIC_MODIFIERS.length)]).append(" ");
-            }
+            name.append(ADJECTIVES[rng.nextInt(ADJECTIVES.length)]).append(" ");
         }
         
         // Base-Name vom AreaType
@@ -79,90 +58,80 @@ public class AreaGenerator {
         
         // 20% Chance auf Suffix
         if (rng.nextFloat() < 0.2f) {
-            String[] suffixes = {" des Vergessens", " der Leere", " der Ewigkeit", 
-                                " des Chaos", " der Stille", " des Echos"};
-            name.append(suffixes[rng.nextInt(suffixes.length)]);
+            name.append(SUFFIXES[rng.nextInt(SUFFIXES.length)]);
         }
         
         return name.toString();
     }
     
     /**
-     * Generiert atmosphärische Beschreibung
+     * Generiert Beschreibung basierend auf Genre und Type
      */
-    private static String generateDescription(Random rng, Dimension dimension, AreaType type) {
-        List<String> sentences = new ArrayList<>();
+    private static String generateDescription(Random rng, Genre genre, AreaType type) {
+        List<String> elements = new ArrayList<>();
         
-        // Eröffnungssatz basierend auf AreaType
-        sentences.add(getOpeningSentence(rng, type, dimension));
+        // Genre-spezifische Beschreibungen
+        elements.add(getGenreDescription(rng, genre));
+        elements.add(getTypeDescription(rng, type));
         
-        // Sinnliche Details von Dimension übernehmen
-        if (rng.nextFloat() < 0.7f) {
-            sentences.add(getDimensionalDetail(rng, dimension));
-        }
-
-        sentences.add(getDangerHint(rng, type));
-        
-        return String.join(" ", sentences);
+        return String.join(" ", elements);
     }
     
-    @SuppressWarnings("unused")
-    private static String getOpeningSentence(Random rng, AreaType type, Dimension dimension) {
-        String[][] templates = {
-            {"Vor dir erstreckt sich", "Du erreichst", "Ein Gebiet offenbart sich:", "Du betrittst"},
-            {" ein", " eine", " das", " die"},
-            {" weites", " verfallenes", " pulsierendes", " geheimnisvolles", " bedrohliches", " stilles"}
+    private static String getGenreDescription(Random rng, Genre genre) {
+        String[] descriptions = switch (genre.getLocation()) {
+            case SCI_FI -> new String[]{
+                "Technologie durchdringt jeden Winkel.",
+                "Displays flackern in unregelmäßigen Intervallen.",
+                "Die Luft riecht nach Ozon und Metall."
+            };
+            case FANTASY -> new String[]{
+                "Magische Energien durchziehen die Atmosphäre.",
+                "Alte Runen glimmen schwach an den Wänden.",
+                "Die Luft knistert vor arkaner Kraft."
+            };
+            case HISTORICAL -> new String[]{
+                "Geschichte lastet schwer auf diesem Ort.",
+                "Jahrhunderte alte Spuren zeugen von vergangenen Zeiten.",
+                "Der Geruch von Staub und Alter erfüllt die Luft."
+            };
+            case CONTEMPORARY -> new String[]{
+                "Moderne Zivilisation hat hier ihre Spuren hinterlassen.",
+                "Der Alltag hat diesen Ort geprägt.",
+                "Vertraute und doch fremde Elemente umgeben dich."
+            };
         };
         
-        String verb = templates[0][rng.nextInt(templates[0].length)];
-        String article = templates[1][rng.nextInt(templates[1].length)];
-        String adjective = templates[2][rng.nextInt(templates[2].length)];
-        
-        return verb + article + adjective + " " + type.getDisplayName() + ".";
+        return descriptions[rng.nextInt(descriptions.length)];
     }
     
-    private static float calculateHostility(Random rng, Dimension dimension, AreaType type, int danger) {        
+    private static String getTypeDescription(Random rng, AreaType type) {
+        // Einfache generische Beschreibungen - können später erweitert werden
+        String[] generic = {
+            "Etwas fühlt sich hier nicht richtig an.",
+            "Du spürst eine gewisse Spannung in der Luft.",
+            "Der Ort wirkt verlassen, aber nicht tot."
+        };
+        
+        return generic[rng.nextInt(generic.length)];
+    }
+    
+    private static float calculateHostility(Random rng, Dimension dimension, 
+                                           AreaType type, int danger) {
         float base = (dimension.getHostility() + type.getBaseHostility()) / 2f;
-        base += (danger - 1) * 0.1f; // Höherer Danger = mehr Hostility
+        base += (danger - 1) * 0.1f;
         
         return Math.max(0f, Math.min(1f, base + (rng.nextFloat() - 0.5f) * 0.15f));
     }
 
-    @SuppressWarnings("unused")
-    private static String getDimensionalDetail(Random rng, Dimension dimension) {
-        String[] templates = {
-            "Die Atmosphäre ist durchdrungen von %s.",
-            "Überall spürst du %s.",
-            "%s erfüllt die Umgebung.",
-            "Du bemerkst %s."
-        };
+    private static List<Encounter> generateEncounters(Random rng, Dimension dimension) {
+        List<Encounter> encounters = new ArrayList<>();
         
-        String[] details = {
-            "fremden Energien",
-            "latenter Gefahr",
-            "alter Macht",
-            "verblasster Erinnerungen",
-            "unsterblicher Präsenz",
-            "dimensionaler Verzerrung"
-        };
+        int encounterCount = 2 + rng.nextInt(3); // 2-4 Räume pro Areal
+        for (int i = 0; i < encounterCount; i++) {
+            Encounter encounter = EncounterGenerator.generate(rng, dimension);
+            encounters.add(encounter);
+        }
         
-        String template = templates[rng.nextInt(templates.length)];
-        String detail = details[rng.nextInt(details.length)];
-        
-        return String.format(template, detail);
-    }
-    
-    @SuppressWarnings("unused")
-    private static String getDangerHint(Random rng, AreaType type) {
-        String[] hints = {
-            "Etwas lauert hier.",
-            "Du solltest vorsichtig sein.",
-            "Die Luft vibriert vor Spannung.",
-            "Jeder Instinkt sagt dir: Sei auf der Hut.",
-            "Hier ist etwas nicht richtig.",
-            "Du fühlst dich beobachtet."
-        };
-        
-        return hints[rng.nextInt(hints.length)];
+        return encounters;
     }
 }
